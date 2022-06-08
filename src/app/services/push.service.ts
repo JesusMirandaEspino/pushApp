@@ -44,7 +44,11 @@ export class PushService {
 
   notificacionRecibida(noti: OSNotification){
     const payload = noti.payload;
-    const existeNoti = this.mensajes.find( mensaje =>  mensaje.notificationID === payload.notificationID )
+    const existeNoti = this.mensajes.find( mensaje =>  mensaje.notificationID === payload.notificationID );
+    if( existeNoti ){
+      return;
+    }
+    this.mensajes.unshift( payload );
   }
 
 
