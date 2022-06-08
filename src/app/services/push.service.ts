@@ -7,6 +7,14 @@ import { OneSignal } from '@awesome-cordova-plugins/onesignal/ngx';
 })
 export class PushService {
 
+  public mensajes: any[] = [
+    {
+      title: '',
+      body: '',
+      date: new Date()
+    }
+  ];
+
   constructor( private oneSignal: OneSignal ) { }
 
 
