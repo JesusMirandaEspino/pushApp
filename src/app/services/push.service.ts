@@ -10,11 +10,18 @@ import { Storage } from '@ionic/storage-angular';
 export class PushService {
 
   public mensajes: OSNotificationPayload [] = [];
+  private _storage: Storage | null = null;
 
   pushListener = new EventEmitter<OSNotificationPayload>();
 
   constructor( private oneSignal: OneSignal, private storage: Storage ) {
+    this.init();
+  }
 
+
+    async init() {
+    const storage = await this.storage.create();
+    this._storage = storage;
   }
 
 
@@ -60,12 +67,12 @@ export class PushService {
 
 
   guardarMensajes() {
-      this.storage.set( 'mensajes', this.mensajes );
+      this._storage.set( 'mensajes', this.mensajes );
       console.log(this.mensajes);
     }
 
     async cargarMensajes(){
-      this.mensajes = await this.storage.get( 'mensajes' ) || [];
+      this.mensajes = await this._storage.get( 'mensajes' ) || [];
     }
 
 }
