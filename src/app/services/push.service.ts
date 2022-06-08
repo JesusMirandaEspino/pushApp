@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { OneSignal, OSNotification } from '@awesome-cordova-plugins/onesignal/ngx';
+import { EventEmitter, Injectable } from '@angular/core';
+import { OneSignal, OSNotification, OSNotificationPayload } from '@awesome-cordova-plugins/onesignal/ngx';
+import { Storage } from '@ionic/storage-angular';
 
 
 
@@ -8,16 +9,19 @@ import { OneSignal, OSNotification } from '@awesome-cordova-plugins/onesignal/ng
 })
 export class PushService {
 
-  public mensajes: any[] = [
-    {
-      title: '',
-      body: '',
-      date: new Date()
-    }
-  ];
+  public mensajes: OSNotificationPayload [] = [];
 
-  constructor( private oneSignal: OneSignal ) { }
+  pushListener = new EventEmitter<OSNotificationPayload>();
 
+  constructor( private oneSignal: OneSignal, private storage: Storage ) {
+
+  }
+
+
+  async getMensajes(){
+    await this.cargarMensajes();
+    return [...this.mensajes];
+  }
 
   configuracionInicial(){
 
@@ -39,17 +43,29 @@ export class PushService {
 
     this.oneSignal.endInit();
 
-  }
+  }7
 
 
-  notificacionRecibida(noti: OSNotification){
+  async notificacionRecibida(noti: OSNotification){
+    await this.cargarMensajes();
     const payload = noti.payload;
     const existeNoti = this.mensajes.find( mensaje =>  mensaje.notificationID === payload.notificationID );
     if( existeNoti ){
       return;
     }
     this.mensajes.unshift( payload );
+    this.pushListener.emit( payload );
+    this.guardarMensajes();
   }
 
+
+  guardarMensajes() {
+      this.storage.set( 'mensajes', this.mensajes );
+      console.log(this.mensajes);
+    }
+
+    async cargarMensajes(){
+      this.mensajes = await this.storage.get( 'mensajes' ) || [];
+    }
 
 }
