@@ -85,4 +85,11 @@ export class PushService {
       return this.mensajes;
     }
 
+
+    borrarMensajes(){
+      this.storage.clear();
+      this.mensajes = [];
+      this.guardarMensajes();
+    }
+
 }
