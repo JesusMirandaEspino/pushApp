@@ -11,6 +11,7 @@ export class PushService {
 
   public mensajes: OSNotificationPayload [] = [];
   private _storage: Storage | null = null;
+  public userId: string;
 
   pushListener = new EventEmitter<OSNotificationPayload>();
 
@@ -49,6 +50,10 @@ export class PushService {
       console.log('open', noti );
     });
 
+    this.oneSignal.getIds().then( info => {
+      this.userId = info.userId;
+    });
+
     this.oneSignal.endInit();
 
   }7
@@ -65,6 +70,9 @@ export class PushService {
     this.pushListener.emit( payload );
     await this.guardarMensajes();
   }
+
+
+
 
 
   guardarMensajes() {
